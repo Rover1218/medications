@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= pageTitle %> - Medication Tracker
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <%- include('partials/nav') %>
+
+        <main class="max-w-6xl mx-auto mt-10 px-4">
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <h1 class="text-4xl font-bold text-center mb-8">Help Center</h1>
+
+                <div class="max-w-3xl mx-auto space-y-8">
+                    <div class="space-y-6">
+                        <h2 class="text-2xl font-semibold">Frequently Asked Questions</h2>
+                        <div class="space-y-4">
+                            <div class="border-b pb-4">
+                                <h3 class="font-semibold mb-2">How do I add a new medication?</h3>
+                                <p class="text-gray-600">Click on the "Add Medication" button in the dashboard and fill
+                                    in the required details about your medication.</p>
+                            </div>
+                            <div class="border-b pb-4">
+                                <h3 class="font-semibold mb-2">How do reminders work?</h3>
+                                <p class="text-gray-600">Reminders can be set when adding medications. You'll receive
+                                    notifications through your preferred method (email/SMS).</p>
+                            </div>
+                            <div class="border-b pb-4">
+                                <h3 class="font-semibold mb-2">Can I share my medication schedule with my doctor?</h3>
+                                <p class="text-gray-600">Yes, you can generate a report of your medication schedule and
+                                    adherence to share with your healthcare provider.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h2 class="text-2xl font-semibold">Need More Help?</h2>
+                        <p class="text-gray-600">If you can't find the answer you're looking for, please reach out to
+                            our support team:</p>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-600">
+                            <li>Email: anindyakanti2020@gmail.com</li>
+                            <li>Phone: 1-800-MED-HELP</li>
+                            <li>Hours: 24/7</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+</body>
+
+</html>

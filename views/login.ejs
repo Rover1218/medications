@@ -5,29 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <header class="header">
-        <h1>Medication Tracker</h1>
-        <p class="typing-text">Never miss a dose!</p>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-4">
+    <div class="max-w-md w-full space-y-8">
+        <header class="text-center transform transition-all duration-500 hover:scale-105">
+            <h1
+                class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                Medication Tracker
+            </h1>
+            <p class="mt-3 text-xl text-gray-600 font-light">Never miss a dose!</p>
+        </header>
 
-    <!-- Authentication Container -->
-    <div class="auth-container">
-        <h2>Login</h2>
-        <form id="login-form">
-            <label for="login-username">Username:</label>
-            <input type="text" id="login-username" name="username" required>
-            <label for="login-password">Password:</label>
-            <input type="password" id="login-password" name="password" required>
-            <button type="submit">Login</button>
-            <p>Don't have an account? <a href="register.ejs">Register</a></p>
-        </form>
+        <div class="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl space-y-6 border border-gray-100">
+            <h2 class="text-3xl font-bold text-center text-gray-800">Login</h2>
+            <!-- Add error message div -->
+            <div id="error-message" class="hidden text-red-500 text-center text-sm"></div>
+            <form id="login-form" class="space-y-6">
+                <div class="space-y-2">
+                    <label for="login-username" class="text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="login-username" name="username" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200">
+                </div>
+                <div class="space-y-2">
+                    <label for="login-password" class="text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="login-password" name="password" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200">
+                </div>
+                <button type="submit" id="login-button"
+                    class="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:opacity-90 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md flex items-center justify-center">
+                    <span>Login</span>
+                    <div id="loading-spinner"
+                        class="hidden ml-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin">
+                    </div>
+                </button>
+                <p class="text-center text-gray-600">
+                    Don't have an account?
+                    <a href="/register"
+                        class="font-medium text-blue-600 hover:text-indigo-600 transition-colors duration-200">
+                        Register
+                    </a>
+                </p>
+            </form>
+        </div>
     </div>
 
-    <script src="login.js"></script>
+    <script src="/js/login.js"></script>
 </body>
 
 </html>

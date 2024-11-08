@@ -4,250 +4,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Medication Tracker</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="/css/index.css">
+    <title>Medication Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body>
-    <header class="header animate__animated animate__fadeIn">
-        <nav class="navbar">
-            <div class="nav-brand">
-                <a href="/" class="brand-name">MedTracker</a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="/" class="nav-item">Home</a></li>
-                <li><a href="/add_medication" class="nav-item">Medications</a></li>
-                <li><a href="/medications" class="nav-item">Medications Manage</a></li>
-            </ul>
-            <div class="auth-links">
-                <a href="/login" class="auth-btn login">Login</a>
-                <a href="/register" class="auth-btn register">Register</a>
-            </div>
-        </nav>
-        <div class="hero-section">
-            <h1 class="main-title animate__animated animate__slideInDown">Welcome to Medication Tracker</h1>
-            <p class="typing-text animate__animated animate__fadeIn">Your personal companion for managing medications
-                effectively and staying healthy.</p>
-            <div class="cta-buttons">
-                <a href="/register" class="cta-btn primary">Get Started</a>
-                <a href="/learn-more" class="cta-btn secondary">Learn More</a>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="text-xl font-semibold text-gray-800">
+                    Medication Tracker
+                </div>
+                <div class="space-x-4">
+                    <% if (isAuthenticated) { %>
+                        <a href="/add_medication" class="text-blue-600 hover:text-blue-800">Add Medication</a>
+                        <a href="/logout" class="text-red-600 hover:text-red-800">Logout</a>
+                        <% } else { %>
+                            <a href="/login" class="text-blue-600 hover:text-blue-800">Login</a>
+                            <a href="/register" class="text-blue-600 hover:text-blue-800">Register</a>
+                            <% } %>
+                </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <div class="content animate__animated animate__fadeIn">
-        <section class="features">
-            <h2 class="section-title">Why Choose MedTracker?</h2>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <i class="fas fa-pills"></i>
-                    <h3>Easy Medication Management</h3>
-                    <p>Track all your medications in one place with simple scheduling tools.</p>
+    <main class="max-w-6xl mx-auto mt-10 px-4">
+        <% if (isAuthenticated) { %>
+            <div class="space-y-8">
+                <!-- Welcome Header -->
+                <div class="flex justify-between items-center">
+                    <h1 class="text-3xl font-bold text-gray-800">Welcome <%= user?.name || 'User' %>
+                    </h1>
+                    <a href="/add_medication"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add New Medication
+                    </a>
                 </div>
-                <div class="feature-card">
-                    <i class="fas fa-bell"></i>
-                    <h3>Timely Reminders</h3>
-                    <p>Never miss a dose with our smart notification system.</p>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-lg">
+                                <i class="fas fa-pills text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500">Active Medications</p>
+                                <h3 class="text-2xl font-bold">
+                                    <%= stats?.activeMedications || 0 %>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <i class="fas fa-check text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500">Taken Today</p>
+                                <h3 class="text-2xl font-bold">
+                                    <%= stats?.takenToday %>/<%= stats?.totalToday %>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 rounded-lg">
+                                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500">Next Dose</p>
+                                <h3 class="text-2xl font-bold">
+                                    <%= stats?.nextDoseTime %>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="feature-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Progress Tracking</h3>
-                    <p>Monitor your medication adherence and health progress.</p>
+
+                <!-- Upcoming Medications -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4">Today's Schedule</h2>
+                    <div class="space-y-4">
+                        <% if (todaysMedications && todaysMedications.length> 0) { %>
+                            <% todaysMedications.forEach(med=> { %>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-2 h-2 bg-<%= med.status === 'taken' ? 'green' : 'yellow' %>-500 rounded-full">
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-medium">
+                                                <%= med.name %>
+                                            </h4>
+                                            <p class="text-sm text-gray-500">
+                                                <%= med.dosage %> - <%= med.instructions %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm text-gray-500">
+                                        <%= med.scheduledTime %>
+                                    </span>
+                                </div>
+                                <% }) %>
+                                    <% } else { %>
+                                        <p class="text-gray-500 text-center py-4">No medications scheduled for today</p>
+                                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <a href="/medications" class="p-4 border rounded-lg hover:bg-gray-50 text-center">
+                                <i class="fas fa-list text-blue-600 text-xl mb-2"></i>
+                                <p>View All Medications</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4">Adherence Overview</h2>
+                        <div class="relative pt-1">
+                            <div class="flex mb-2 items-center justify-between">
+                                <div>
+                                    <span
+                                        class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+                                        This Week
+                                    </span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs font-semibold inline-block text-blue-600">
+                                        <%= stats.adherenceRate %>%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200">
+                                <div
+                                    class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-600">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-    </div>
+            <% } else { %>
+                <!-- Hero Section -->
+                <div class="text-center py-16">
+                    <h1 class="text-5xl font-bold text-gray-800 mb-6">
+                        Your Personal Medication Assistant
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                        Stay on track with your medications, receive timely reminders, and manage your health journey
+                        with ease.
+                    </p>
+                    <div class="space-x-4">
+                        <a href="/register"
+                            class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            Get Started Free
+                        </a>
+                    </div>
+                </div>
 
-    <footer class="floating-footer">
-        <div class="footer-content">
-            <p>&copy; 2024 Medication Adherence Tracker. All rights reserved.</p>
+                <!-- Features Grid -->
+                <div class="grid md:grid-cols-3 gap-8 py-16">
+                    <div class="text-center p-6 bg-white rounded-xl shadow-md">
+                        <i class="fas fa-bell text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Smart Reminders</h3>
+                        <p class="text-gray-600">Never miss a dose with customizable medication reminders</p>
+                    </div>
+                    <div class="text-center p-6 bg-white rounded-xl shadow-md">
+                        <i class="fas fa-chart-line text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Track Progress</h3>
+                        <p class="text-gray-600">Monitor your medication adherence with detailed insights</p>
+                    </div>
+                    <div class="text-center p-6 bg-white rounded-xl shadow-md">
+                        <i class="fas fa-user-shield text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Secure & Private</h3>
+                        <p class="text-gray-600">Your health data is encrypted and protected</p>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="py-16 bg-blue-600 rounded-xl my-16 text-white">
+                    <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
+                        <% platformStats.forEach(stat=> { %>
+                            <div>
+                                <h3 class="text-4xl font-bold mb-2">
+                                    <%= stat.value %>
+                                </h3>
+                                <p>
+                                    <%= stat.label %>
+                                </p>
+                            </div>
+                            <% }) %>
+                    </div>
+                </div>
+
+                <!-- How It Works -->
+                <div class="py-16">
+                    <h2 class="text-3xl font-bold text-center mb-12">How It Works</h2>
+                    <div class="grid md:grid-cols-4 gap-8">
+                        <div class="text-center">
+                            <div
+                                class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <span class="text-blue-600 text-xl font-bold">1</span>
+                            </div>
+                            <h3 class="font-semibold mb-2">Sign Up</h3>
+                            <p class="text-gray-600">Create your free account</p>
+                        </div>
+                        <div class="text-center">
+                            <div
+                                class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <span class="text-blue-600 text-xl font-bold">2</span>
+                            </div>
+                            <h3 class="font-semibold mb-2">Add Medications</h3>
+                            <p class="text-gray-600">Input your medication details</p>
+                        </div>
+                        <div class="text-center">
+                            <div
+                                class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <span class="text-blue-600 text-xl font-bold">3</span>
+                            </div>
+                            <h3 class="font-semibold mb-2">Set Reminders</h3>
+                            <p class="text-gray-600">Schedule your medication times</p>
+                        </div>
+                        <div class="text-center">
+                            <div
+                                class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <span class="text-blue-600 text-xl font-bold">4</span>
+                            </div>
+                            <h3 class="font-semibold mb-2">Stay Healthy</h3>
+                            <p class="text-gray-600">Never miss a dose again</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial Section -->
+                <div class="bg-white rounded-xl shadow-md p-8 my-16">
+                    <div class="max-w-3xl mx-auto text-center">
+                        <i class="fas fa-quote-left text-4xl text-blue-600 mb-6"></i>
+                        <% testimonials.forEach(testimonial=> { %>
+                            <p class="text-xl text-gray-700 mb-4">"<%= testimonial.quote %>"</p>
+                            <p class="font-semibold text-gray-800">- <%= testimonial.author %>
+                            </p>
+                            <% }) %>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="py-16">
+                    <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+                    <div class="max-w-3xl mx-auto space-y-6">
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h3 class="font-semibold mb-2">Is my data secure?</h3>
+                            <p class="text-gray-600">Yes, we use industry-standard encryption to protect your personal
+                                information.</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h3 class="font-semibold mb-2">How do reminders work?</h3>
+                            <p class="text-gray-600">You'll receive notifications through email, SMS, or push
+                                notifications based on your preferences.</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h3 class="font-semibold mb-2">Is it free to use?</h3>
+                            <p class="text-gray-600">Yes, basic features are free. Premium features are available for
+                                advanced users.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final CTA -->
+                <div class="bg-blue-600 text-white rounded-xl p-12 text-center my-16">
+                    <h2 class="text-3xl font-bold mb-4">Ready to Take Control of Your Medication Schedule?</h2>
+                    <p class="mb-8 text-xl">Join thousands of users who have improved their medication adherence</p>
+                    <a href="/register"
+                        class="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors inline-block">
+                        Start Your Free Account
+                    </a>
+                </div>
+                <% } %>
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="font-bold mb-4">Medication Tracker</h3>
+                <p class="text-gray-400">Your personal medication management assistant</p>
+            </div>
+            <div>
+                <h3 class="font-bold mb-4">Quick Links</h3>
+                <ul class="space-y-2 text-gray-400">
+                    <li><a href="/about" class="hover:text-white">About</a></li>
+                    <li><a href="/features" class="hover:text-white">Features</a></li>
+                    <li><a href="/pricing" class="hover:text-white">Pricing</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold mb-4">Support</h3>
+                <ul class="space-y-2 text-gray-400">
+                    <li><a href="/help" class="hover:text-white">Help Center</a></li>
+                    <li><a href="/contact" class="hover:text-white">Contact Us</a></li>
+                    <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+            <p>&copy; <%= new Date().getFullYear() %> Medication Tracker. All rights reserved.</p>
         </div>
     </footer>
 
-    <script src="/public/js/index.js"></script>
-    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+    <!-- Add this just before closing </body> tag -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('search');
+            const statusSelect = document.getElementById('status');
+            const sortSelect = document.getElementById('sort');
+            const clearFiltersBtn = document.getElementById('clearFilters');
 
-    <style>
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+            function applyFilters() {
+                const searchValue = searchInput.value;
+                const statusValue = statusSelect.value;
+                const sortValue = sortSelect.value;
 
-        .nav-brand {
-            flex: 1;
-        }
+                // Build query string
+                const params = new URLSearchParams();
+                if (searchValue) params.append('search', searchValue);
+                if (statusValue !== 'all') params.append('status', statusValue);
+                if (sortValue) params.append('sort', sortValue);
 
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2c3e50;
-            text-decoration: none;
-        }
+                // Redirect with filters
+                window.location.href = `${window.location.pathname}?${params.toString()}`;
+            }
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            flex: 2;
-            justify-content: center;
-        }
+            // Add event listeners
+            searchInput.addEventListener('input', debounce(applyFilters, 500));
+            statusSelect.addEventListener('change', applyFilters);
+            sortSelect.addEventListener('change', applyFilters);
 
-        .nav-item {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            font-weight: 400;
-            color: #34495e;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
+            clearFiltersBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                statusSelect.value = 'all';
+                sortSelect.value = 'name';
+                window.location.href = window.location.pathname;
+            });
 
-        .nav-item:hover {
-            color: #3498db;
-        }
+            // Set initial values from URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            searchInput.value = urlParams.get('search') || '';
+            statusSelect.value = urlParams.get('status') || 'all';
+            sortSelect.value = urlParams.get('sort') || 'name';
+        });
 
-        .auth-links {
-            display: flex;
-            gap: 1rem;
-            flex: 1;
-            justify-content: flex-end;
+        // Debounce function to prevent too many requests
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
-
-        .auth-btn {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            padding: 0.5rem 1.2rem;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .login {
-            color: #3498db;
-            border: 2px solid #3498db;
-        }
-
-        .login:hover {
-            background-color: #3498db;
-            color: white;
-        }
-
-        .register {
-            background-color: #3498db;
-            color: white;
-            border: 2px solid #3498db;
-        }
-
-        .register:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-
-        .main-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 3.5rem;
-            color: #2c3e50;
-        }
-
-        .typing-text {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 300;
-            font-size: 1.2rem;
-            color: #34495e;
-        }
-
-        .section-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .hero-section {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9));
-        }
-
-        .cta-buttons {
-            margin-top: 2rem;
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .cta-btn {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            padding: 1rem 2rem;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .cta-btn.primary {
-            background-color: #3498db;
-            color: white;
-        }
-
-        .cta-btn.secondary {
-            border: 2px solid #3498db;
-            color: #3498db;
-        }
-
-        .features {
-            padding: 4rem 2rem;
-            background-color: #f8f9fa;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 2rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-card i {
-            font-size: 2.5rem;
-            color: #3498db;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            font-family: 'Montserrat', sans-serif;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card p {
-            font-family: 'Poppins', sans-serif;
-            color: #666;
-            line-height: 1.6;
-        }
-    </style>
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,25 @@
+<nav class="bg-white shadow-lg">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between items-center py-4">
+            <div class="flex items-center space-x-8">
+                <a href="/" class="text-xl font-semibold text-gray-800">Medication Tracker</a>
+                <div class="hidden md:flex space-x-4">
+                    <a href="/about" class="text-gray-600 hover:text-blue-600">About</a>
+                    <a href="/features" class="text-gray-600 hover:text-blue-600">Features</a>
+                    <a href="/help" class="text-gray-600 hover:text-blue-600">Help</a>
+                    <a href="/contact" class="text-gray-600 hover:text-blue-600">Contact</a>
+                    <a href="/privacy" class="text-gray-600 hover:text-blue-600">Privacy</a>
+                </div>
+            </div>
+            <div class="space-x-4">
+                <% if (isAuthenticated) { %>
+                    <a href="/add_medication" class="text-blue-600 hover:text-blue-800">Add Medication</a>
+                    <a href="/logout" class="text-red-600 hover:text-red-800">Logout</a>
+                    <% } else { %>
+                        <a href="/login" class="text-blue-600 hover:text-blue-800">Login</a>
+                        <a href="/register" class="text-blue-600 hover:text-blue-800">Register</a>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+</nav>

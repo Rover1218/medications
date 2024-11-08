@@ -39,7 +39,7 @@
             </section>
 
             <button type="submit">Register</button>
-            <p>Already have an account? <a href="login.ejs">Login</a></p>
+            <p>Already have an account? <a href="/login">Login</a></p>
         </form>
     </div>
 
@@ -54,7 +54,7 @@
             const password = document.getElementById('register-password').value;
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/register', {
+                const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -62,10 +62,11 @@
                     body: JSON.stringify({ firstName, lastName, email, username, password })
                 });
 
+                const data = await response.json();
                 if (response.ok) {
-                    window.location.href = 'login.ejs'; // Redirect to login page
+                    window.location.href = '/login'; // Changed from login.ejs to /login
                 } else {
-                    alert('Registration failed');
+                    alert(data.message || 'Registration failed');
                 }
             } catch (error) {
                 console.error('Error:', error);
