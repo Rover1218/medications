@@ -144,6 +144,21 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.delete('/api/medications/:id', async (req, res) => {
+    try {
+        const medicationId = req.params.id;
+        const result = await Medication.findByIdAndDelete(medicationId);
+        if (result) {
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ success: false, message: 'Medication not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting medication:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
 // ...existing code...
 
 module.exports = router;

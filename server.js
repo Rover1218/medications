@@ -325,6 +325,31 @@ app.post('/add_medication', authMiddleware, async (req, res) => {
     }
 });
 
+app.post('/api/medications', async (req, res) => {
+    try {
+        const { name, dosage, frequency, startDate, endDate, notificationSettings } = req.body;
+
+        if (!notificationSettings.notificationTimes || notificationSettings.notificationTimes.length === 0) {
+            throw new Error('At least one notification time is required');
+        }
+
+        const newMedication = new Medication({
+            name,
+            dosage,
+            frequency,
+            startDate,
+            endDate,
+            notificationSettings
+        });
+
+        await newMedication.save();
+        res.json({ success: true, medication: newMedication });
+    } catch (error) {
+        console.error('Error adding medication:', error);
+        res.status(400).json({ success: false, message: error.message });
+    }
+});
+
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -471,7 +496,6 @@ app.get('/api/medications', authMiddleware, async (req, res) => {
     }
 });
 
-// Add a route to delete a medication
 app.delete('/api/medications/:id', authMiddleware, async (req, res) => {
     const medicationId = req.params.id;
     const userId = req.session.userId;

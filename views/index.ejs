@@ -66,7 +66,7 @@
                             <div class="ml-4">
                                 <p class="text-gray-500">Taken Today</p>
                                 <h3 class="text-2xl font-bold">
-                                    <%= stats?.takenToday %>/<%= stats?.totalToday %>
+                                    <%= stats?.takenToday || 0 %>/<%= stats?.totalToday || 0 %>
                                 </h3>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                             <div class="ml-4">
                                 <p class="text-gray-500">Next Dose</p>
                                 <h3 class="text-2xl font-bold">
-                                    <%= stats?.nextDoseTime %>
+                                    <%= stats?.nextDoseTime || 'N/A' %>
                                 </h3>
                             </div>
                         </div>
@@ -92,28 +92,32 @@
                     <div class="space-y-4">
                         <% if (todaysMedications && todaysMedications.length> 0) { %>
                             <% todaysMedications.forEach(med=> { %>
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                    <div class="flex items-center">
-                                        <div
-                                            class="w-2 h-2 bg-<%= med.status === 'taken' ? 'green' : 'yellow' %>-500 rounded-full">
+                                <% if (new Date(med.startDate) <=new Date() && new Date(med.endDate)>= new Date()) { %>
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div
+                                                class="w-2 h-2 bg-<%= med.status === 'taken' ? 'green' : 'yellow' %>-500 rounded-full">
+                                            </div>
+                                            <div class="ml-4">
+                                                <h4 class="font-medium">
+                                                    <%= med.name %>
+                                                </h4>
+                                                <p class="text-sm text-gray-500">
+                                                    <%= med.dosage %> - <%= med.instructions %>
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div class="ml-4">
-                                            <h4 class="font-medium">
-                                                <%= med.name %>
-                                            </h4>
-                                            <p class="text-sm text-gray-500">
-                                                <%= med.dosage %> - <%= med.instructions %>
-                                            </p>
-                                        </div>
+                                        <span class="text-sm text-gray-500">
+                                            <%= new Date(med.scheduledTime).toLocaleTimeString([], { hour: '2-digit' ,
+                                                minute: '2-digit' }) %>
+                                        </span>
                                     </div>
-                                    <span class="text-sm text-gray-500">
-                                        <%= med.scheduledTime %>
-                                    </span>
-                                </div>
-                                <% }) %>
-                                    <% } else { %>
-                                        <p class="text-gray-500 text-center py-4">No medications scheduled for today</p>
-                                        <% } %>
+                                    <% } %>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <p class="text-gray-500 text-center py-4">No medications scheduled for
+                                                    today</p>
+                                                <% } %>
                     </div>
                 </div>
 
@@ -142,7 +146,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
                     <div class="bg-white rounded-xl shadow-md p-6">
                         <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
                         <div class="grid grid-cols-2 gap-4">
@@ -184,7 +188,8 @@
                         Your Personal Medication Assistant
                     </h1>
                     <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                        Stay on track with your medications, receive timely reminders, and manage your health journey
+                        Stay on track with your medications, receive timely reminders, and manage your health
+                        journey
                         with ease.
                     </p>
                     <div class="space-x-4">
@@ -287,7 +292,8 @@
                     <div class="max-w-3xl mx-auto space-y-6">
                         <div class="bg-white rounded-lg p-6 shadow-md">
                             <h3 class="font-semibold mb-2">Is my data secure?</h3>
-                            <p class="text-gray-600">Yes, we use industry-standard encryption to protect your personal
+                            <p class="text-gray-600">Yes, we use industry-standard encryption to protect your
+                                personal
                                 information.</p>
                         </div>
                         <div class="bg-white rounded-lg p-6 shadow-md">
@@ -297,16 +303,18 @@
                         </div>
                         <div class="bg-white rounded-lg p-6 shadow-md">
                             <h3 class="font-semibold mb-2">Is it free to use?</h3>
-                            <p class="text-gray-600">Yes, basic features are free. Premium features are available for
+                            <p class="text-gray-600">Yes, basic features are free. Premium features are
+                                available for
                                 advanced users.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Final CTA -->
-                <div class="bg-blue-600 text-white rounded-xl p-12 text-center my-16">
+                <div class="bg-blue-600 text-white rounded-xl p-12 text-center mb-16">
                     <h2 class="text-3xl font-bold mb-4">Ready to Take Control of Your Medication Schedule?</h2>
-                    <p class="mb-8 text-xl">Join thousands of users who have improved their medication adherence</p>
+                    <p class="mb-8 text-xl">Join thousands of users who have improved their medication adherence
+                    </p>
                     <a href="/register"
                         class="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors inline-block">
                         Start Your Free Account
@@ -315,8 +323,19 @@
                 <% } %>
     </main>
 
+    <!-- Error Modal -->
+    <div id="errorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-96">
+            <h3 class="text-lg font-semibold mb-4">Error</h3>
+            <p id="errorMessage" class="mb-4"></p>
+            <div class="flex justify-end">
+                <button id="closeErrorModal" class="px-4 py-2 bg-gray-300 rounded-lg">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Enhanced Footer -->
-    <footer class="bg-gray-800 text-white py-12">
+    <footer class="bg-gray-800 text-white py-12 mt-8">
         <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8">
             <div>
                 <h3 class="font-bold mb-4">Medication Tracker</h3>
@@ -425,6 +444,23 @@
                     });
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const errorModal = document.getElementById('errorModal');
+            const errorMessage = document.getElementById('errorMessage');
+            const closeErrorModal = document.getElementById('closeErrorModal');
+
+            // Show error modal if there's an error message
+            const errorText = document.getElementById('error-message').innerText;
+            if (errorText) {
+                errorMessage.innerText = errorText;
+                errorModal.classList.remove('hidden');
+            }
+
+            closeErrorModal.addEventListener('click', function () {
+                errorModal.classList.add('hidden');
+            });
+        });
     </script>
 </body>
 
