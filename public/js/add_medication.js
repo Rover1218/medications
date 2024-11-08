@@ -51,7 +51,6 @@ document.getElementById('add-medication-form').addEventListener('submit', functi
         end_date: formData.get('end_date'),
         notifications_enabled: formData.get('notifications_enabled') === 'on',
         notification_email: formData.get('notification_email') === 'on',
-        notification_sms: formData.get('notification_sms') === 'on',
         notification_push: formData.get('notification_push') === 'on',
         reminder_before: formData.get('reminder_before'),
         reminder_repeat: formData.get('reminder_repeat'),

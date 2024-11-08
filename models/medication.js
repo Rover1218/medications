@@ -10,7 +10,6 @@ const medicationSchema = new mongoose.Schema({
         enabled: { type: Boolean, default: true },
         methods: {
             email: { type: Boolean, default: true },
-            sms: { type: Boolean, default: false },
             push: { type: Boolean, default: true }
         },
         reminder: {

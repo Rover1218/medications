@@ -54,11 +54,6 @@ Medication Tracker is a web application designed to help users manage their medi
     EMAIL_USER=your-email@gmail.com
     EMAIL_PASS=your-app-specific-password
 
-    # Twilio Configuration
-    TWILIO_ACCOUNT_SID=your-account-sid
-    TWILIO_AUTH_TOKEN=your-auth-token
-    TWILIO_PHONE_NUMBER=your-twilio-number
-
     # Web Push Configuration
     VAPID_PUBLIC_KEY=your-vapid-public-key
     VAPID_PRIVATE_KEY=your-vapid-private-key

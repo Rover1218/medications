@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Medications - Medication Tracker</title>
+    <link rel="icon" href="/Star_of_life2.svg.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -81,8 +82,8 @@
                                                 </div>
                                             </div>
                                             <div class="flex space-x-2">
-                                                <button onclick="deleteMedication('<%= med._id %>')"
-                                                    class="text-red-600 hover:text-red-800">
+                                                <button data-medication-id="<%= med._id %>"
+                                                    class="delete-medication text-red-600 hover:text-red-800">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
@@ -132,257 +133,336 @@
                 };
             }
 
-            // Search and filter functionality
-            const searchInput = document.getElementById('search');
-            const statusFilter = document.getElementById('status');
-            const sortSelect = document.getElementById('sort');
-            const clearFiltersBtn = document.getElementById('clearFilters');
-            const medicationsList = document.getElementById('medications-list');
+            // Ensure the DOM is fully loaded
+            document.addEventListener('DOMContentLoaded', function () {
+                // Search and filter functionality
+                const searchInput = document.getElementById('search');
+                const statusFilter = document.getElementById('status');
+                const sortSelect = document.getElementById('sort');
+                const clearFiltersBtn = document.getElementById('clearFilters');
+                const medicationsList = document.getElementById('medications-list');
 
-            // Debounced version of updateMedicationsList
-            const debouncedUpdate = debounce(updateMedicationsList, 300);
+                // Debounced version of updateMedicationsList
+                const debouncedUpdate = debounce(updateMedicationsList, 300);
 
-            function updateMedicationsList() {
-                const searchTerm = encodeURIComponent(searchInput.value.toLowerCase());
-                const status = statusFilter.value;
-                const sort = sortSelect.value;
+                // Add event listeners
+                searchInput.addEventListener('input', debouncedUpdate);
+                statusFilter.addEventListener('change', updateMedicationsList);
+                sortSelect.addEventListener('change', updateMedicationsList);
+                clearFiltersBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    statusFilter.value = 'all';
+                    sortSelect.value = 'name';
+                    updateMedicationsList();
+                });
 
-                console.log('Updating medications list with:', { searchTerm, status, sort });
+                // Initial fetch to populate the medications list
+                updateMedicationsList();
 
-                // Show loading state
-                medicationsList.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                function updateMedicationsList() {
+                    const searchTerm = encodeURIComponent(searchInput.value.toLowerCase());
+                    const status = statusFilter.value;
+                    const sort = sortSelect.value;
 
-                fetch(`/api/medications?search=${searchTerm}&status=${status}&sort=${sort}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Server response:', data);
-                        if (data.success) {
-                            renderMedicationsList(data.medications);
-                        } else {
-                            console.error('Failed to fetch medications:', data.message);
-                            medicationsList.innerHTML = `
-                                <div class="text-center py-4 text-red-600">
-                                    <i class="fas fa-exclamation-circle"></i> Error: ${data.message}
-                                </div>
-                            `;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        medicationsList.innerHTML = `
-                            <div class="text-center py-4 text-red-600">
-                                <i class="fas fa-exclamation-circle"></i> Error loading medications
-                            </div>
-                        `;
-                    });
-            }
+                    // Show loading state
+                    medicationsList.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
 
-            function renderMedicationsList(medications) {
-                medicationsList.innerHTML = '';
-                if (medications.length > 0) {
-                    medications.forEach(med => {
-                        const medicationCard = document.createElement('div');
-                        medicationCard.className = 'medication-card bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow';
-                        medicationCard.innerHTML = `
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-xl font-semibold text-gray-800">${med.name}</h3>
-                                    <p class="text-gray-600">${med.dosage} - ${med.frequency}x daily</p>
-                                    <div class="mt-2 space-x-4">
-                                        <span class="text-sm text-gray-500">
-                                            <i class="far fa-calendar mr-1"></i>
-                                            ${new Date(med.startDate).toLocaleDateString()} - ${new Date(med.endDate).toLocaleDateString()}
-                                        </span>
-                                        <span class="text-sm text-gray-500">
-                                            <i class="far fa-clock mr-1"></i>
-                                            ${med.notificationTimes.map(t => t.time).join(', ')}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button onclick="deleteMedication('${med._id}')" class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mt-4 flex items-center space-x-4">
-                                <span class="px-3 py-1 rounded-full text-sm ${getStatusClass(med)}">
-                                    ${getStatusText(med)}
-                                </span>
-                                <span class="text-sm text-gray-500">
-                                    <i class="fas fa-bell ${med.notificationSettings?.enabled ? 'text-blue-600' : 'text-gray-400'}"></i>
-                                    ${med.notificationSettings?.enabled ? 'Notifications On' : 'Notifications Off'}
-                                </span>
-                            </div>
-                        `;
-                        medicationsList.appendChild(medicationCard);
-                    });
-                } else {
-                    medicationsList.innerHTML = `
-                        <div class="text-center py-12">
-                            <i class="fas fa-pills text-gray-400 text-5xl mb-4"></i>
-                            <p class="text-gray-500">No medications found</p>
-                            <a href="/add_medication" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">Add your first medication</a>
-                        </div>
-                    `;
-                }
-            }
-
-            // Helper functions for status
-            function getStatusClass(med) {
-                const now = new Date();
-                const endDate = new Date(med.endDate);
-                const startDate = new Date(med.startDate);
-
-                if (endDate < now) {
-                    return 'bg-gray-200 text-gray-700';
-                } else if (startDate > now) {
-                    return 'bg-yellow-200 text-yellow-700';
-                } else {
-                    return 'bg-green-200 text-green-700';
-                }
-            }
-
-            function getStatusText(med) {
-                const now = new Date();
-                const endDate = new Date(med.endDate);
-                const startDate = new Date(med.startDate);
-
-                if (endDate < now) {
-                    return 'Completed';
-                } else if (startDate > now) {
-                    return 'Upcoming';
-                } else {
-                    return 'Active';
-                }
-            }
-
-            function deleteMedication(id) {
-                if (confirm('Are you sure you want to delete this medication?')) {
-                    fetch(`/api/medications/${id}`, {
-                        method: 'DELETE'
-                    })
+                    fetch(`/api/medications?search=${searchTerm}&status=${status}&sort=${sort}`)
                         .then(response => response.json())
                         .then(data => {
+                            console.log('Server response:', data);
                             if (data.success) {
-                                updateMedicationsList();
+                                renderMedicationsList(data.medications);
                             } else {
-                                alert(data.message);
+                                console.error('Failed to fetch medications:', data.message);
+                                medicationsList.innerHTML = `
+                                    <div class="text-center py-4 text-red-600">
+                                        <i class="fas fa-exclamation-circle"></i> Error: ${data.message}
+                                    </div>
+                                `;
                             }
                         })
-                        .catch(error => console.error('Error:', error));
+                        .catch(error => {
+                            console.error('Error:', error);
+                            medicationsList.innerHTML = `
+                                <div class="text-center py-4 text-red-600">
+                                    <i class="fas fa-exclamation-circle"></i> Error loading medications
+                                </div>
+                            `;
+                        });
                 }
-            }
 
-            // Edit modal functions
-            const editModal = document.getElementById('editModal');
-
-            async function editMedication(id) {
-                console.log('Editing medication with ID:', id);
-                try {
-                    const response = await fetch(`/api/medications/${id}`);
-                    const data = await response.json();
-
-                    if (data.success) {
-                        // Populate modal with medication data
-                        document.getElementById('editMedicationId').value = id;
-                        document.getElementById('editName').value = data.medication.name;
-                        document.getElementById('editDosage').value = data.medication.dosage;
-                        document.getElementById('editFrequency').value = data.medication.frequency;
-                        document.getElementById('editStartDate').value = data.medication.startDate.split('T')[0];
-                        document.getElementById('editEndDate').value = data.medication.endDate.split('T')[0];
-                        document.getElementById('editBeforeMinutes').value = data.medication.notificationSettings.reminder.beforeMinutes || 0;
-
-                        // Show modal
-                        editModal.classList.remove('hidden');
+                function renderMedicationsList(medications) {
+                    medicationsList.innerHTML = '';
+                    if (medications.length > 0) {
+                        medications.forEach(med => {
+                            const medicationCard = document.createElement('div');
+                            medicationCard.className = 'medication-card bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow';
+                            medicationCard.innerHTML = `
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800">${med.name}</h3>
+                                        <p class="text-gray-600">${med.dosage} - ${med.frequency}x daily</p>
+                                        <div class="mt-2 space-x-4">
+                                            <span class="text-sm text-gray-500">
+                                                <i class="far fa-calendar mr-1"></i>
+                                                ${new Date(med.startDate).toLocaleDateString()} - ${new Date(med.endDate).toLocaleDateString()}
+                                            </span>
+                                            <span class="text-sm text-gray-500">
+                                                <i class="far fa-clock mr-1"></i>
+                                                ${med.notificationTimes.map(t => t.time).join(', ')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button data-medication-id="${med._id}" class="delete-medication text-red-600 hover:text-red-800">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center space-x-4">
+                                    <span class="px-3 py-1 rounded-full text-sm ${getStatusClass(med)}">
+                                        ${getStatusText(med)}
+                                    </span>
+                                    <span class="text-sm text-gray-500">
+                                        <i class="fas fa-bell ${med.notificationSettings?.enabled ? 'text-blue-600' : 'text-gray-400'}"></i>
+                                        ${med.notificationSettings?.enabled ? 'Notifications On' : 'Notifications Off'}
+                                    </span>
+                                </div>
+                            `;
+                            medicationsList.appendChild(medicationCard);
+                        });
                     } else {
-                        alert('Error: Medication not found');
+                        medicationsList.innerHTML = `
+                            <div class="text-center py-12">
+                                <i class="fas fa-pills text-gray-400 text-5xl mb-4"></i>
+                                <p class="text-gray-500">No medications found</p>
+                                <a href="/add_medication" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">Add your first medication</a>
+                            </div>
+                        `;
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error loading medication details');
-                }
-            }
-
-            function closeEditModal() {
-                editModal.classList.add('hidden');
-            }
-
-            // Updated edit form submission
-            document.getElementById('editMedicationForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const medicationId = formData.get('medicationId');
-                const beforeMinutes = parseInt(formData.get('beforeMinutes'), 10);
-
-                if (isNaN(beforeMinutes)) {
-                    alert('Reminder Before (minutes) must be a valid number');
-                    return;
                 }
 
-                const medicationData = {
-                    name: formData.get('name'),
-                    dosage: formData.get('dosage'),
-                    frequency: parseInt(formData.get('frequency'), 10),
-                    startDate: formData.get('start_date'),
-                    endDate: formData.get('end_date'),
-                    notificationSettings: {
-                        enabled: true,
-                        reminder: {
-                            beforeMinutes: beforeMinutes
-                        },
-                        notificationTimes: []
-                    }
-                };
+                // Helper functions for status
+                function getStatusClass(med) {
+                    const now = new Date();
+                    const endDate = new Date(med.endDate);
+                    const startDate = new Date(med.startDate);
 
-                try {
-                    const response = await fetch(`/api/medications/${medicationId}`, {
-                        method: 'PUT',
+                    if (endDate < now) {
+                        return 'bg-gray-200 text-gray-700';
+                    } else if (startDate > now) {
+                        return 'bg-yellow-200 text-yellow-700';
+                    } else {
+                        return 'bg-green-200 text-green-700';
+                    }
+                }
+
+                function getStatusText(med) {
+                    const now = new Date();
+                    const endDate = new Date(med.endDate);
+                    const startDate = new Date(med.startDate);
+
+                    if (endDate < now) {
+                        return 'Completed';
+                    } else if (startDate > now) {
+                        return 'Upcoming';
+                    } else {
+                        return 'Active';
+                    }
+                }
+
+                function deleteMedication(id) {
+                    console.log(`Attempting to delete medication: ${id}`);
+                    fetch(`/api/medications/${id}`, {
+                        method: 'DELETE',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(medicationData)
-                    });
+                        credentials: 'include'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Medication deleted successfully');
+                                // Reload the page to show updated list
+                                window.location.reload();
+                            } else {
+                                console.error('Failed to delete medication:', data.message);
+                                alert('Failed to delete medication: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error deleting medication');
+                        });
+                }
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                // Edit modal functions
+                const editModal = document.getElementById('editModal');
+
+                async function editMedication(id) {
+                    console.log('Editing medication with ID:', id);
+                    try {
+                        const response = await fetch(`/api/medications/${id}`);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Populate modal with medication data
+                            document.getElementById('editMedicationId').value = id;
+                            document.getElementById('editName').value = data.medication.name;
+                            document.getElementById('editDosage').value = data.medication.dosage;
+                            document.getElementById('editFrequency').value = data.medication.frequency;
+                            document.getElementById('editStartDate').value = data.medication.startDate.split('T')[0];
+                            document.getElementById('editEndDate').value = data.medication.endDate.split('T')[0];
+                            document.getElementById('editBeforeMinutes').value = data.medication.notificationSettings.reminder.beforeMinutes || 0;
+
+                            // Show modal
+                            editModal.classList.remove('hidden');
+                        } else {
+                            alert('Error: Medication not found');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error loading medication details');
+                    }
+                }
+
+                function closeEditModal() {
+                    editModal.classList.add('hidden');
+                }
+
+                // Updated edit form submission
+                document.getElementById('editMedicationForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const medicationId = formData.get('medicationId');
+                    const beforeMinutes = parseInt(formData.get('beforeMinutes'), 10);
+
+                    if (isNaN(beforeMinutes)) {
+                        alert('Reminder Before (minutes) must be a valid number');
+                        return;
                     }
 
-                    const data = await response.json();
-                    console.log('Server response:', data);
+                    const medicationData = {
+                        name: formData.get('name'),
+                        dosage: formData.get('dosage'),
+                        frequency: parseInt(formData.get('frequency'), 10),
+                        startDate: formData.get('start_date'),
+                        endDate: formData.get('end_date'),
+                        notificationSettings: {
+                            enabled: true,
+                            reminder: {
+                                beforeMinutes: beforeMinutes
+                            },
+                            notificationTimes: []
+                        }
+                    };
 
-                    if (data.success) {
+                    try {
+                        const response = await fetch(`/api/medications/${medicationId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(medicationData)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        console.log('Server response:', data);
+
+                        if (data.success) {
+                            closeEditModal();
+                            updateMedicationsList();
+                        } else {
+                            alert('Error updating medication: ' + (data.message || 'Unknown error'));
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error updating medication: ' + error.message);
+                    }
+                });
+
+                // Close modal when clicking outside
+                editModal.addEventListener('click', (e) => {
+                    if (e.target === editModal) {
                         closeEditModal();
-                        updateMedicationsList();
-                    } else {
-                        alert('Error updating medication: ' + (data.message || 'Unknown error'));
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error updating medication: ' + error.message);
-                }
-            });
+                });
 
-            // Close modal when clicking outside
-            editModal.addEventListener('click', (e) => {
-                if (e.target === editModal) {
-                    closeEditModal();
-                }
-            });
+                // Event listeners with debounce
+                searchInput.addEventListener('input', debouncedUpdate);
+                statusFilter.addEventListener('change', updateMedicationsList);
+                sortSelect.addEventListener('change', updateMedicationsList);
+                clearFiltersBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    statusFilter.value = 'all';
+                    sortSelect.value = 'name';
+                    updateMedicationsList();
+                });
 
-            // Event listeners with debounce
-            searchInput.addEventListener('input', debouncedUpdate);
-            statusFilter.addEventListener('change', updateMedicationsList);
-            sortSelect.addEventListener('change', updateMedicationsList);
-            clearFiltersBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                statusFilter.value = 'all';
-                sortSelect.value = 'name';
+                // Initial fetch to populate the medications list
                 updateMedicationsList();
             });
 
-            // Initial fetch to populate the medications list
-            updateMedicationsList();
+            // Make updateMedicationsList available globally
+            window.updateMedicationsList = function () {
+                window.location.reload(); // Simple reload for now
+            };
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Add click event listeners to all delete buttons
+                document.querySelectorAll('.delete-medication').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const medicationId = this.dataset.medicationId;
+                        if (confirm('Are you sure you want to delete this medication?')) {
+                            deleteMedication(medicationId);
+                        }
+                    });
+                });
+
+                function deleteMedication(id) {
+                    console.log(`Attempting to delete medication: ${id}`);
+                    fetch(`/api/medications/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Medication deleted successfully');
+                                // Reload the page to show updated list
+                                window.location.reload();
+                            } else {
+                                console.error('Failed to delete medication:', data.message);
+                                alert('Failed to delete medication: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error deleting medication');
+                        });
+                }
+            });
         </script>
 </body>
 

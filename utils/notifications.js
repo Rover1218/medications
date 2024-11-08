@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const twilio = require('twilio');
 const webpush = require('web-push');
 const db = require('../db/connection');
 
@@ -12,12 +11,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Configure Twilio client
-const twilioClient = twilio(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN
-);
-
 // Configure web push
 webpush.setVapidDetails(
     'mailto:' + process.env.EMAIL_USER,
@@ -29,11 +22,11 @@ async function sendNotification({ userId, title, message, type }) {
     try {
         // Get user notification preferences
         const userPrefs = await db.query(
-            'SELECT notification_email, notification_sms, notification_push FROM users WHERE id = $1',
+            'SELECT notification_email, notification_push FROM users WHERE id = $1',
             [userId]
         );
 
-        const { notification_email, notification_sms, notification_push } = userPrefs.rows[0];
+        const { notification_email, notification_push } = userPrefs.rows[0];
 
         // Store notification in database
         await db.query(
@@ -45,11 +38,6 @@ async function sendNotification({ userId, title, message, type }) {
         if (notification_email) {
             // Implement email sending logic
             await sendEmail(userId, title, message);
-        }
-
-        if (notification_sms) {
-            // Implement SMS sending logic
-            await sendSMS(userId, message);
         }
 
         if (notification_push) {
@@ -77,17 +65,6 @@ async function sendEmail(userId, title, message) {
             <h2>${title}</h2>
             <p>${message}</p>
         </div>`
-    });
-}
-
-async function sendSMS(userId, message) {
-    const user = await db.query('SELECT phone FROM users WHERE id = $1', [userId]);
-    const userPhone = user.rows[0].phone;
-
-    await twilioClient.messages.create({
-        body: message,
-        to: userPhone,
-        from: process.env.TWILIO_PHONE_NUMBER
     });
 }
 

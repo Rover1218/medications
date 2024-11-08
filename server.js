@@ -170,15 +170,16 @@ app.get('/', async (req, res) => {
                 return res.render('index', defaultData);
             }
 
-            // Fetch user's medications for today
+            // Fetch user's medications
+            const medications = await Medication.find({
+                userId: req.session.userId
+            });
+
+            // Fetch user's doses for today
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
-
-            const medications = await Medication.find({
-                user_id: req.session.userId
-            });
 
             const doses = await Dose.find({
                 medication_id: { $in: medications.map(m => m._id) },
@@ -199,7 +200,7 @@ app.get('/', async (req, res) => {
                 scheduled_time: { $gt: new Date() }
             }).sort('scheduled_time');
 
-            // Prepare medications list
+            // Prepare medications list for today's schedule
             const todaysMedications = await Promise.all(doses.map(async dose => {
                 const medication = medications.find(m => m._id.equals(dose.medication_id));
                 return {
@@ -230,6 +231,7 @@ app.get('/', async (req, res) => {
                     adherenceRate: totalDoses ? Math.round((takenDoses / totalDoses) * 100) : 0
                 },
                 todaysMedications,
+                medications, // Pass medications to the template
                 platformStats: defaultData.platformStats,
                 testimonials: defaultData.testimonials
             });
@@ -271,7 +273,6 @@ app.post('/add_medication', authMiddleware, async (req, res) => {
             notification_times,
             notifications_enabled,
             notification_email,
-            notification_sms,
             notification_push,
             reminder_before,
             reminder_repeat
@@ -293,7 +294,6 @@ app.post('/add_medication', authMiddleware, async (req, res) => {
                 enabled: notifications_enabled,
                 methods: {
                     email: notification_email,
-                    sms: notification_sms,
                     push: notification_push
                 },
                 reminder: {
@@ -473,26 +473,41 @@ app.get('/api/medications', authMiddleware, async (req, res) => {
 
 // Add a route to delete a medication
 app.delete('/api/medications/:id', authMiddleware, async (req, res) => {
+    const medicationId = req.params.id;
+    const userId = req.session.userId;
+
+    console.log(`Delete request received - Medication ID: ${medicationId}, User ID: ${userId}`);
+
+    if (!mongoose.Types.ObjectId.isValid(medicationId)) {
+        console.log('Invalid medication ID format');
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid medication ID'
+        });
+    }
+
     try {
-        const medication = await Medication.findOneAndDelete({
-            _id: req.params.id,
-            userId: req.session.userId
+        const result = await Medication.findOneAndDelete({
+            _id: medicationId,
+            userId: userId
         });
 
-        if (!medication) {
+        if (!result) {
+            console.log('Medication not found or unauthorized');
             return res.status(404).json({
                 success: false,
-                message: 'Medication not found'
+                message: 'Medication not found or unauthorized'
             });
         }
 
-        res.json({
+        console.log('Medication deleted successfully');
+        return res.json({
             success: true,
             message: 'Medication deleted successfully'
         });
     } catch (error) {
         console.error('Error deleting medication:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Error deleting medication',
             error: error.message
@@ -527,7 +542,6 @@ app.put('/api/medications/:id', authMiddleware, async (req, res) => {
                     'notificationSettings.enabled': req.body.notifications_enabled === 'on',
                     'notificationSettings.methods': {
                         email: req.body.notification_email === 'on',
-                        sms: req.body.notification_sms === 'on',
                         push: req.body.notification_push === 'on'
                     },
                     'notificationSettings.reminder': {
