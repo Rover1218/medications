@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="header">
+        <h1>Medication Tracker</h1>
+        <p class="typing-text">Never miss a dose!</p>
+    </header>
+
+    <!-- Authentication Container -->
+    <div class="auth-container">
+        <h2>Register</h2>
+        <form id="register-form">
+            <!-- Personal Information Section -->
+            <section>
+                <h3>Personal Information</h3>
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="firstName" required>
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="lastName" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </section>
+
+            <!-- Account Information Section -->
+            <section>
+                <h3>Account Information</h3>
+                <label for="register-username">Username:</label>
+                <input type="text" id="register-username" name="username" required>
+                <label for="register-password">Password:</label>
+                <input type="password" id="register-password" name="password" required>
+            </section>
+
+            <button type="submit">Register</button>
+            <p>Already have an account? <a href="login.ejs">Login</a></p>
+        </form>
+    </div>
+
+    <!-- JavaScript for Register Functionality -->
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ firstName, lastName, email, username, password })
+                });
+
+                if (response.ok) {
+                    window.location.href = 'login.ejs'; // Redirect to login page
+                } else {
+                    alert('Registration failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>

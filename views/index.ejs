@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Medication Tracker</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+    <header class="header animate__animated animate__fadeIn">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="/" class="brand-name">MedTracker</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/" class="nav-item">Home</a></li>
+                <li><a href="/add_medication" class="nav-item">Medications</a></li>
+                <li><a href="/medications" class="nav-item">Medications Manage</a></li>
+            </ul>
+            <div class="auth-links">
+                <a href="/login" class="auth-btn login">Login</a>
+                <a href="/register" class="auth-btn register">Register</a>
+            </div>
+        </nav>
+        <div class="hero-section">
+            <h1 class="main-title animate__animated animate__slideInDown">Welcome to Medication Tracker</h1>
+            <p class="typing-text animate__animated animate__fadeIn">Your personal companion for managing medications
+                effectively and staying healthy.</p>
+            <div class="cta-buttons">
+                <a href="/register" class="cta-btn primary">Get Started</a>
+                <a href="/learn-more" class="cta-btn secondary">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="content animate__animated animate__fadeIn">
+        <section class="features">
+            <h2 class="section-title">Why Choose MedTracker?</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-pills"></i>
+                    <h3>Easy Medication Management</h3>
+                    <p>Track all your medications in one place with simple scheduling tools.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bell"></i>
+                    <h3>Timely Reminders</h3>
+                    <p>Never miss a dose with our smart notification system.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your medication adherence and health progress.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="floating-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Medication Adherence Tracker. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/public/js/index.js"></script>
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+
+    <style>
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-brand {
+            flex: 1;
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            flex: 2;
+            justify-content: center;
+        }
+
+        .nav-item {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+            color: #34495e;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: #3498db;
+        }
+
+        .auth-links {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .auth-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .login {
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+
+        .login:hover {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .register {
+            background-color: #3498db;
+            color: white;
+            border: 2px solid #3498db;
+        }
+
+        .register:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 3.5rem;
+            color: #2c3e50;
+        }
+
+        .typing-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            font-size: 1.2rem;
+            color: #34495e;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9));
+        }
+
+        .cta-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .cta-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn.primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .cta-btn.secondary {
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+
+        .features {
+            padding: 4rem 2rem;
+            background-color: #f8f9fa;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            font-family: 'Poppins', sans-serif;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</body>
+
+</html>

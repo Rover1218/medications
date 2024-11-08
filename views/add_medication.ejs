@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Medication - Medication Tracker</title>
+    <link rel="stylesheet" href="/css/add_medication.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2 class="title">Add Medication</h2>
+        <form method="POST" class="form" id="add-medication-form">
+            <div class="form-group">
+                <label for="name">Medication Name:</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="dosage">Dosage:</label>
+                <input type="text" name="dosage" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="frequency">Frequency (per day):</label>
+                <input type="text" name="frequency" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" name="start_date" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Medication</button>
+        </form>
+    </div>
+    <script src="/public/js/add_medication.js"></script>
+</body>
+
+</html>
