@@ -1,4 +1,5 @@
 const express = require('express');
+const serverless = require('serverless-http');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const path = require('path');
@@ -679,9 +680,5 @@ app.use((err, req, res, next) => {
     res.status(500).render('500');
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+// Export the app as a serverless handler
+module.exports.handler = serverless(app);
