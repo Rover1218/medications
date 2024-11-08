@@ -8,7 +8,15 @@ require('dotenv').config();
 const app = express();
 
 // Connect to database
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/medical_tracker')
+const mongoUri = process.env.MONGO_URI.startsWith('mongodb+srv://')
+    ? process.env.MONGO_URI
+    : process.env.MONGO_URI.replace('mongodb://', 'mongodb+srv://');
+mongoose.connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+})
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error(err));
 
@@ -44,6 +52,8 @@ const User = mongoose.model('User', new mongoose.Schema({
     username: { type: String, unique: true, required: true },
     password: { type: String, required: true },
     email: { type: String, unique: true, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     medications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Medication' }],
     doctor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: false }
 }));
@@ -170,6 +180,11 @@ app.post('/api/medications', authMiddleware, async (req, res) => {
     }
 });
 
+// Route to provide the link to the localhost
+app.get('/localhost', (req, res) => {
+    res.send(`Server running at http://localhost:${PORT}`);
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -177,7 +192,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

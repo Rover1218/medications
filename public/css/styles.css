@@ -1,78 +1,798 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Body Styling */
 body {
+    background-color: #f0f8ff;
+    color: #333;
+    line-height: 1.6;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
 }
 
+/* Header Styling */
+/* Update the font and alignment */
 .header {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    /* Adjust height as needed */
     background-color: #4CAF50;
     color: white;
-    padding: 1rem;
     text-align: center;
+    padding: 1em 0;
+}
+
+/* Center the text vertically and horizontally */
+.header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+    animation: fadeInDown 1s ease-in-out;
+    font-family: 'Arial', sans-serif;
+    /* Change to desired font */
+}
+
+.header p {
+    font-size: 1.5em;
+    font-family: 'Arial', sans-serif;
+    /* Change to desired font */
+    text-align: center;
+    margin: 0 auto;
 }
 
 .typing-text {
+    font-family: 'Arial', sans-serif;
+    /* Change to desired font */
+    font-size: 2em;
+    color: #fff;
+    animation: typing 1.5s steps(30, end), blink-caret .5s step-end infinite;
+    /* Increased speed */
     font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
+    font-size: 1.2em;
 }
 
-.container {
-    margin: 2rem auto;
-    padding: 1rem;
-    max-width: 800px;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* Adjust the typing animation speed */
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
 }
 
-.form-group {
-    margin-bottom: 1rem;
+/* Search Container */
+.search-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin: 1em 0;
 }
 
-.form-control {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
+.search-bar {
+    padding: 10px;
+    font-size: 1.2em;
+    border: 2px solid #c032a3;
+    border-radius: 30px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    padding: 0.5em;
+    width: 60%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.btn {
+.search-bar:focus {
+    border-color: #2575fc;
+    box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
+}
+
+.search-button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    background: #1b808b;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    padding: 0.5em 1em;
     background-color: #4CAF50;
     color: white;
-    padding: 0.5rem 1rem;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
 }
 
-.btn-primary {
-    background-color: #007BFF;
+.search-button:hover {
+    background: #1ba8bb;
+    transform: scale(1.05);
+    background-color: #45a049;
+}
+
+/* Wrapper for Medications */
+.wrapper {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.box {
+    background: #fff;
+    width: 300px;
+    margin: 20px;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.box:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.box img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.edit-delete-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+}
+
+.edit-button,
+.delete-button {
+    background: #ff5252;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.edit-button:hover {
+    background: #ff7961;
+}
+
+.delete-button:hover {
+    background: #d32f2f;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s;
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 10px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    transition: color 0.2s;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+/* Buttons in Modals */
+button {
+    padding: 10px 20px;
+    background-color: #39a6a3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.2s ease;
+}
+
+button:hover {
+    background-color: #2575fc;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: #26808b;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 20px;
+    display: inline-block;
+    transition: background 0.2s ease;
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background: #6a11cb;
+    border-radius: 30px;
+    background-color: #ddd;
+    color: black;
+}
+
+/* Keyframes for Animations */
+/* Typing Animation */
+.typing-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2em;
+    color: #fff;
+    animation: typing 1.5s steps(30, end), blink-caret .75s step-end infinite;
+}
+
+/* Keyframes for Typing Animation */
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/* Keyframes for Caret Blink Animation */
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: white;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(50%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Authentication Container */
+.auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #e8f5e9;
+    /* Light green background */
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.auth-container h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #388e3c;
+    /* Green text */
+}
+
+.auth-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-container label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #388e3c;
+    /* Green text */
+}
+
+.auth-container input {
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid #d32f2f;
+    /* Red border */
+    border-radius: 5px;
+    outline: none;
+    margin-bottom: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-container input:focus {
+    border-color: #388e3c;
+    /* Green border on focus */
+    box-shadow: 0 0 5px rgba(56, 142, 60, 0.5);
+    /* Green shadow on focus */
+}
+
+.auth-container button {
+    padding: 10px;
+    font-size: 1em;
+    background-color: #d32f2f;
+    /* Red background */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.auth-container button:hover {
+    background-color: #c2185b;
+    /* Darker red on hover */
+    transform: scale(1.05);
+}
+
+.auth-container p {
+    margin-top: 15px;
+}
+
+.auth-container a {
+    color: #388e3c;
+    /* Green text for link */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.auth-container a:hover {
+    color: #1b5e20;
+    /* Darker green on hover */
+    text-decoration: underline;
+}
+
+/* Authentication Navigation */
+.auth-navigation {
+    text-align: center;
+    margin-top: 20px;
+    text-align: center;
+    margin: 1em 0;
+}
+
+.auth-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #2575fc;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    margin: 0 10px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    margin: 0 0.5em;
+    border-radius: 5px;
+}
+
+.auth-button:hover {
+    background-color: #1b808b;
+    transform: scale(1.05);
+    background-color: #45a049;
+}
+
+/* Center the content and change the font */
+.centered-content {
+    font-family: 'Arial', sans-serif;
+    /* Change to desired font */
+    text-align: center;
+    padding: 10px;
+    margin: 0 auto;
+    max-width: 300px;
+    /* Adjust the width as needed */
+    line-height: 1.2;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.centered-content h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.centered-content p {
+    font-size: 1.0em;
+}
+
+/* Home Page Styles */
+.content {
+    text-align: center;
+    padding: 50px;
+}
+
+.content h2 {
+    font-size: 2.5em;
+    color: #2575fc;
+    margin-bottom: 20px;
+    animation: fadeInDown 1s ease-in-out;
+}
+
+.content p {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 20px;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.cta-button {
+    padding: 15px 30px;
+    background-color: #6a11cb;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+}
+
+.cta-button:hover {
+    background-color: #2575fc;
+    transform: scale(1.1);
+    background-color: #45a049;
+}
+
+footer {
+    background-color: #2575fc;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-content p {
+    margin: 0;
+}
+
+/* Medications Page Styles */
+ul#medication-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul#medication-list li {
+    background: #f0f8ff;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+ul#medication-list li:hover {
+    background: #e0e7ff;
+}
+
+.cta-button {
+    margin-top: 20px;
+}
+
+/* Modal Styles (same as before) */
+/* Settings Page Styles */
+form#settings-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+form#settings-form label {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+form#settings-form input,
+form#settings-form select {
+    margin-bottom: 20px;
+    padding: 8px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Reports Page Styles */
+#report-overview {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 1.2em;
+}
+
+#report-overview p {
+    margin: 10px 0;
+}
+
+#chart-container {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Button styles as before */
+.cta-button {
+    margin-top: 20px;
+}
+
+/* Default light theme styles */
+body {
+    background-color: #ffffff;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header {
+    background-color: #f9f9f9;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.content {
+    padding: 20px;
+    text-align: left;
+}
+
+.footer-content {
+    background-color: #f9f9f9;
+    padding: 10px;
+    text-align: center;
+    border-top: 2px solid #e0e0e0;
+}
+
+/* Dark theme styles */
+body.dark {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+body.dark .header,
+body.dark .footer-content {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+
+body.dark .content {
+    background-color: #1e1e1e;
+}
+
+/* Additional dark theme adjustments */
+body.dark a,
+body.dark a:visited {
+    color: #bb86fc;
+}
+
+/* Form and button styles */
+form label {
+    font-weight: 600;
+    margin-right: 10px;
 }
 
 .cta-button {
     background-color: #4CAF50;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 10px 20px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.footer-content {
-    text-align: center;
-    padding: 1rem;
-    background-color: #333;
+.cta-button:hover {
+    background-color: #357c97ba;
+}
+
+/* Wrapper for Buttons */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    /* Adjust the spacing between buttons */
+    margin: 20px 0;
+    /* Adjust top and bottom margin */
+}
+
+.cta-button {
+    background-color: #2f72c8;
     color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cta-button:hover {
+    background-color: #3f98b6;
+    transform: scale(1.05);
+}
+
+#content {
+    padding: 2em;
+    text-align: center;
+}
+
+/* New Navigation Bar and Footer Styles */
+.navbar {
+    background-color: #333;
+    overflow: hidden;
+}
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.navbar ul li {
+    float: left;
+}
+
+.navbar ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar ul li a:hover {
+    background-color: #ddd;
+    color: black;
 }
 
 .footer-nav ul {
-    list-style: none;
+    list-style-type: none;
+    margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
 }
 
 .footer-nav ul li {
-    display: inline;
-    margin: 0 1rem;
+    margin: 0 10px;
 }
 
 .footer-nav ul li a {
     color: white;
     text-decoration: none;
+}
+
+.footer-nav ul li a:hover {
+    text-decoration: underline;
 }
