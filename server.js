@@ -659,15 +659,9 @@ app.get('/api/medications/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// Handle 404 errors
-app.use((req, res, next) => {
-    res.status(404).render('404');
-});
-
-// Handle other errors (500)
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).render('500');
+// Add a route to provide the localhost link
+app.get('/localhost', (req, res) => {
+    res.json({ link: 'http://localhost:3000' });
 });
 
 app.use((req, res, next) => {
@@ -682,3 +676,8 @@ app.use((err, req, res, next) => {
 
 // Export the app as a serverless handler
 module.exports.handler = serverless(app);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
