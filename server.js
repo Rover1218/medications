@@ -19,12 +19,7 @@ app.use(express.static('public'));
 const mongoUri = process.env.MONGO_URI.startsWith('mongodb+srv://')
     ? process.env.MONGO_URI
     : process.env.MONGO_URI.replace('mongodb://', 'mongodb+srv://');
-mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false
-})
+mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error(err));
 
