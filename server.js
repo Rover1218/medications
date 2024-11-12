@@ -19,7 +19,12 @@ app.use(express.static('public'));
 const mongoUri = process.env.MONGO_URI.startsWith('mongodb+srv://')
     ? process.env.MONGO_URI
     : process.env.MONGO_URI.replace('mongodb://', 'mongodb+srv://');
-mongoose.connect(mongoUri)
+mongoose.connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+})
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error(err));
 
@@ -84,7 +89,7 @@ const Dose = mongoose.model('Dose', new mongoose.Schema({
     scheduled_time: { type: Date, required: true },
     taken_time: { type: Date, required: false },
     medication_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Medication', required: true }
-}));
+}).index({ scheduled_time: 1 })); // Replace ensureIndex with createIndexes
 
 // API Routes
 app.post('/api/auth/register', async (req, res) => {
